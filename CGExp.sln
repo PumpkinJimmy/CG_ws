@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "learngl_3_2_colorTri", "lea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "learngl_3_3_shaderClass", "learngl_3_3_shaderClass\learngl_3_3_shaderClass.vcxproj", "{4E952800-474A-4C1B-BBA1-9FAD493B265A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "learngl_4_texture", "learngl_4_texture\learngl_4_texture.vcxproj", "{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{4E952800-474A-4C1B-BBA1-9FAD493B265A}.Release|x64.Build.0 = Release|x64
 		{4E952800-474A-4C1B-BBA1-9FAD493B265A}.Release|x86.ActiveCfg = Release|Win32
 		{4E952800-474A-4C1B-BBA1-9FAD493B265A}.Release|x86.Build.0 = Release|Win32
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Debug|x64.ActiveCfg = Debug|x64
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Debug|x64.Build.0 = Debug|x64
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Debug|x86.ActiveCfg = Debug|Win32
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Debug|x86.Build.0 = Debug|Win32
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Release|x64.ActiveCfg = Release|x64
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Release|x64.Build.0 = Release|x64
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Release|x86.ActiveCfg = Release|Win32
+		{A6B0287D-3654-4687-907B-BFBAAE1F2F2E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
