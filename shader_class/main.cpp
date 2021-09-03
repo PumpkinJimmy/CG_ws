@@ -1,9 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+#include "shader.h"
 int main()
 {
 	stbi_set_flip_vertically_on_load(true);
@@ -12,7 +17,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
+
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Learn OpenGL", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -29,7 +34,7 @@ int main()
 	glViewport(0, 0, 800, 600);
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
-	});
+		});
 
 	auto processInput = [](GLFWwindow* window) {
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -38,8 +43,8 @@ int main()
 	};
 	// --------- Texture -------
 
-	
-	
+
+
 
 	unsigned int texture1, texture2;
 	glGenTextures(1, &texture1);
@@ -88,10 +93,10 @@ int main()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 
-	
-	
 
-	
+
+
+
 
 	// ---------- Vertex -----------
 
@@ -134,100 +139,40 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
-
-	// -------- Vertex Shader -------------
-	const char* vertexShaderSource = R"(
-	#version 400 core
-	layout (location=0) in vec3 aPos;
-	layout (location=1) in vec3 aColor;
-	layout (location=2) in vec2 aTexCoord;
-
-	out vec3 ourColor;
-	out vec2 TexCoord;
-
-	void main()
-	{
-		gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-		ourColor = aColor;
-		TexCoord = aTexCoord;
-	}
-)";
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	int  success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// -------- Fragment Shader ------------
-	const char* fragmentShaderSource = R"(
-	#version 400 core
-	out vec4 FragColor;
 	
-	in vec3 ourColor;
-	in vec2 TexCoord;
-	
-	uniform sampler2D texture1;
-	uniform sampler2D texture2;
-
-	void main()
-	{
-		// FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord),0.2);
-		FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord),0.4);
-	}
-)";
-	unsigned fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
 
 	// --------- Shader Program --------
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-	}
+	ShaderProgram sp;
+	sp.loadVertexShader("vertexShader.vert");
+	sp.loadFragmentShader("fragmentShader.frag");
+	sp.linkProgram();
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	
+
+
+
 	while (!glfwWindowShouldClose(window)) {
 
 		processInput(window);
 
+		glm::mat4 trans(1.0f);
+		/*trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+		trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));*/
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
-		glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
+		sp.use();
+		sp.set("transform", trans);
+		sp.set("texture1", 0);
+		sp.set("texture2", 1);
 		glBindVertexArray(VAO);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

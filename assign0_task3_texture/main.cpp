@@ -12,7 +12,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
+
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Learn OpenGL", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -29,7 +29,7 @@ int main()
 	glViewport(0, 0, 800, 600);
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
-	});
+		});
 
 	auto processInput = [](GLFWwindow* window) {
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -38,8 +38,8 @@ int main()
 	};
 	// --------- Texture -------
 
-	
-	
+
+
 
 	unsigned int texture1, texture2;
 	glGenTextures(1, &texture1);
@@ -70,37 +70,28 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	/*data = stbi_load(R"(E:\CG_ws\textures\awesomeface.png)", &width, &height, &nrChannels, 0);
+	data = stbi_load(R"(E:\CG_ws\textures\awesomeface.png)", &width, &height, &nrChannels, 0);
 	if (data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else {
 		std::cout << "Failed to load texture" << std::endl;
-	}*/
-
-	data = stbi_load(R"(E:\CG_ws\textures\girl.jpg)", &width, &height, &nrChannels, 0);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
 	}
 
-	
-	
 
-	
+
+
+
 
 	// ---------- Vertex -----------
 
 	float vertices[] = {
 		//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // 右上
+			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // 右下
 			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // 左上
 	};
 
 	unsigned int indices[] = {
@@ -180,8 +171,7 @@ int main()
 
 	void main()
 	{
-		// FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord),0.2);
-		FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord),0.4);
+		FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord),0.2);
 	}
 )";
 	unsigned fragmentShader;
@@ -211,7 +201,7 @@ int main()
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	
+
 	while (!glfwWindowShouldClose(window)) {
 
 		processInput(window);
@@ -227,7 +217,7 @@ int main()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

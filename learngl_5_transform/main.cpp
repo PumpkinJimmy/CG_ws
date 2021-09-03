@@ -1,6 +1,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -12,7 +15,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
+
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Learn OpenGL", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -29,7 +32,7 @@ int main()
 	glViewport(0, 0, 800, 600);
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
-	});
+		});
 
 	auto processInput = [](GLFWwindow* window) {
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -38,8 +41,8 @@ int main()
 	};
 	// --------- Texture -------
 
-	
-	
+
+
 
 	unsigned int texture1, texture2;
 	glGenTextures(1, &texture1);
@@ -88,10 +91,10 @@ int main()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 
-	
-	
 
-	
+
+
+
 
 	// ---------- Vertex -----------
 
@@ -145,9 +148,11 @@ int main()
 	out vec3 ourColor;
 	out vec2 TexCoord;
 
+	uniform mat4 transform;
+
 	void main()
 	{
-		gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+		gl_Position = transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
 		ourColor = aColor;
 		TexCoord = aTexCoord;
 	}
@@ -211,15 +216,27 @@ int main()
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
 	
+	
+	
+
 	while (!glfwWindowShouldClose(window)) {
 
 		processInput(window);
+
+		glm::mat4 trans(1.0f);
+		/*trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+		trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));*/
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
+		unsigned transformLoc = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 		glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
 		glBindVertexArray(VAO);
@@ -227,7 +244,7 @@ int main()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
