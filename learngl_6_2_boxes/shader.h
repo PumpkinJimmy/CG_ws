@@ -116,7 +116,7 @@ public:
 
 	template <>
 	void set<float>(const string& name, float val) {
-		glUniform1i(glGetUniformLocation(pid, name.c_str()), val);
+		glUniform1f(glGetUniformLocation(pid, name.c_str()), val);
 	}
 
 	template <>
